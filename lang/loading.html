@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confidence Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { overflow: hidden; }
+
+    .hexagon {
+      width: 140px;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #7e22ce, #3b82f6);
+      clip-path: polygon(
+        25% 5.77%,   /* Oben links */
+        75% 5.77%,   /* Oben rechts */
+        100% 50%,    /* Rechts */
+        75% 94.23%,  /* Unten rechts */
+        25% 94.23%,  /* Unten links */
+        0% 50%       /* Links */
+      );
+      box-shadow: 0 0 20px rgba(126,34,206,0.6), 0 0 40px rgba(59,130,246,0.4);
+      margin: auto; /* Zentrierung */
+    }
+
+    /* Erstes Aufblitzen */
+    @keyframes pulseFlash {
+      0%   { transform: scale(1); opacity: 0.8; box-shadow: 0 0 15px rgba(126,34,206,0.6), 0 0 30px rgba(59,130,246,0.4); }
+      30%  { transform: scale(1.15); opacity: 1; box-shadow: 0 0 35px rgba(126,34,206,0.9), 0 0 60px rgba(59,130,246,0.7); }
+      60%  { transform: scale(1); opacity: 0.9; box-shadow: 0 0 20px rgba(126,34,206,0.6), 0 0 40px rgba(59,130,246,0.4); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Haupt-Animation mit zusätzlicher Drehung */
+    @keyframes fall2D {
+      0%   { transform: rotate(0deg) scale(1); opacity: 1; }
+      25%  { transform: rotate(180deg) scale(1.2); }   /* erste Hälfte Drehung */
+      50%  { transform: rotate(360deg) scale(1.2); }   /* volle Drehung */
+      70%  { transform: rotate(360deg) scale(1.6); }   /* stoppt Rotation, weiter skalieren */
+      100% { transform: rotate(360deg) scale(25); opacity: 0; } /* finale Explosion */
+    }
+
+    /* Kombi: erst Flash, dann Fall */
+    .animate-fall2d {
+      animation: pulseFlash 1s ease-out, fall2D 4s cubic-bezier(0.4, 0, 0.2, 1) 1s forwards;
+    }
+
+    
+  </style>
+</head>
+<body class="bg-black flex items-center justify-center h-screen">
+  <!-- Loader -->
+  <div id="loader" class="hexagon animate-fall2d" aria-hidden="true"></div>
+
+  <!-- Website Content -->
+  <main id="content" class="hidden text-center">
+    <h1 class="text-white text-4xl md:text-6xl font-bold">confidence.digital</h1>
+    <p class="text-gray-400 mt-4 text-lg md:text-xl">Digitale Lösungen mit Präzision &amp; Stil</p>
+  </main>
+
+  <script>
+    // Loader-Dauer = 1s Puls + 4s Haupt-Animation = 5s
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+      const content = document.getElementById("content");
+      content.classList.remove("hidden");
+      content.classList.add("fade-in");
+      document.body.style.overflow = "auto";
+    }, 5000);
+  </script>
+</body>
+</html>

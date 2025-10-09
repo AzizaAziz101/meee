@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confidence Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { overflow: hidden; }
+
+    .heptagon {
+      width: 140px;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #7e22ce, #3b82f6);
+      clip-path: polygon(
+        50% 0%,
+        90% 20%,
+        100% 60%,
+        75% 100%,
+        25% 100%,
+        0% 60%,
+        10% 20%
+      );
+    }
+
+    /* Animation: kippt von Kante zu Kante und zoomt hinein */
+    @keyframes fall2D {
+      0%   { transform: rotate(0deg) scale(1); }
+      20%  { transform: rotate(25deg) scale(1); }
+      40%  { transform: rotate(60deg) scale(1); }
+      60%  { transform: rotate(90deg) scale(1.1); }
+      80%  { transform: rotate(120deg) scale(1.5); }
+      100% { transform: rotate(180deg) scale(25); opacity: 0; }
+    }
+
+    .animate-fall2d {
+      animation: fall2D 4s ease-in-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-black flex items-center justify-center h-screen">
+  <!-- Loader -->
+  <div id="loader" class="heptagon animate-fall2d"></div>
+
+  <!-- Website Content -->
+  <div id="content" class="hidden">
+    <h1 class="text-white text-4xl md:text-6xl font-bold text-center">confidence.digital</h1>
+  </div>
+
+  <script>
+    // Nach Animation Content zeigen
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("content").classList.remove("hidden");
+      document.body.style.overflow = "auto";
+    }, 4000); // nach 4s
+  </script>
+</body>
+</html>

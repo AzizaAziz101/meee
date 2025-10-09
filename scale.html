@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confidence Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { overflow: hidden; }
+
+    .hexagon {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #7e22ce, #3b82f6);
+      clip-path: polygon(
+        25% 5.77%, 
+        75% 5.77%, 
+        100% 50%, 
+        75% 94.23%, 
+        25% 94.23%, 
+        0% 50%
+      );
+      box-shadow: 0 0 20px rgba(126,34,206,0.6), 0 0 40px rgba(59,130,246,0.4);
+      margin: auto;
+    }
+
+    /* Puls-Effekt */
+    @keyframes pulseFlash {
+      0%   { transform: scale(1); opacity: 0.9; box-shadow: 0 0 15px rgba(126,34,206,0.6), 0 0 30px rgba(59,130,246,0.4); }
+      30%  { transform: scale(1.15); opacity: 1; box-shadow: 0 0 35px rgba(126,34,206,0.9), 0 0 60px rgba(59,130,246,0.7); }
+      60%  { transform: scale(1); opacity: 0.95; box-shadow: 0 0 20px rgba(126,34,206,0.6), 0 0 40px rgba(59,130,246,0.4); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Finale Animation: schnell groß und ausblenden */
+    @keyframes fall2D {
+      0%   { transform: rotate(0deg) scale(1); opacity: 1; }
+      25%  { transform: rotate(180deg) scale(1.2); opacity: 0.95; }
+      50%  { transform: rotate(360deg) scale(1.2); opacity: 0.9; }
+      70%  { transform: rotate(360deg) scale(1.6); opacity: 0.7; }
+      85%  { transform: rotate(360deg) scale(5); opacity: 0.5; }
+      100% { transform: rotate(360deg) scale(50); opacity: 0; }
+    }
+
+    .animate-fall2d {
+      animation: pulseFlash 1s ease-out, fall2D 4s cubic-bezier(0.4, 0, 0.2, 1) 1s forwards;
+    }
+
+    /* Fade-In für Content */
+    .fade-in {
+      opacity: 0;
+      animation: fadeIn 1s ease-in forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* Fade-Out für Loader */
+    .fade-out {
+      animation: fadeOut 1s ease-in forwards;
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+  </style>
+</head>
+<body class="bg-black flex items-center justify-center h-screen">
+  <!-- Loader -->
+  <div id="loader" class="hexagon w-24 sm:w-32 md:w-36 lg:w-40 animate-fall2d" aria-hidden="true"></div>
+
+  <!-- Website Content -->
+  <main id="content" class="hidden text-center px-4">
+    <h1 class="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold">confidence.digital</h1>
+    <p class="text-gray-400 mt-4 text-base sm:text-lg md:text-xl lg:text-2xl">Digitale Lösungen mit Präzision &amp; Stil</p>
+  </main>
+
+  <script>
+    // Loader-Dauer = 1s Puls + 4s Hauptanimation
+    setTimeout(() => {
+      const loader = document.getElementById("loader");
+      loader.classList.add("fade-out");
+
+      loader.addEventListener("animationend", () => {
+        loader.style.display = "none";          // Hexagon sofort entfernen
+        const content = document.getElementById("content");
+        content.classList.remove("hidden");
+        content.classList.add("fade-in");       // Content sofort einblenden
+        document.body.style.overflow = "auto";
+      });
+    }, 5000);
+  </script>
+</body>
+</html>

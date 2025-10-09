@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasy Interactive Journey</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 400vh;
+    background: linear-gradient(180deg, #1f1c2c, #928dab); /* Fantasy.co Farbstil */
+    color: #fff;
+}
+canvas { display: block; position: fixed; top:0; left:0; }
+#info {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+    background: rgba(0,0,0,0.5);
+    padding: 12px;
+    border-radius: 10px;
+    max-width: 320px;
+}
+.tooltip {
+    position: fixed;
+    background: rgba(50,20,70,0.9);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 15px;
+    pointer-events: none;
+    font-size: 15px;
+    display: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    max-width: 300px;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+}
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<div id="info">Scroll nach unten für Abenteuer, nach oben für zurück. Klicke auf Plattformen für Details.</div>
+<div class="tooltip" id="tooltip"></div>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+class Player {
+    constructor(){
+        this.width = 50;
+        this.height = 50;
+        this.x = window.scrollY;
+        this.y = canvas.height/2;
+        this.color = '#ffb347'; // Fantasy.co Accent
+        this.shadowColor = 'rgba(0,0,0,0.3)';
+    }
+    draw(offsetX){
+        ctx.shadowColor = this.shadowColor;
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x - offsetX, this.y, this.width, this.height);
+        ctx.shadowBlur = 0;
+    }
+}
+
+class Platform {
+    constructor(x, y, w, h, color='#9b59b6', label='', info=''){
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+        this.color = color;
+        this.label = label;
+        this.info = info;
+    }
+    draw(offsetX){
+        let gradient = ctx.createLinearGradient(this.x - offsetX, this.y, this.x - offsetX + this.width, this.y + this.height);
+        gradient.addColorStop(0, this.color);
+        gradient.addColorStop(1, '#ffffff20');
+        ctx.fillStyle = gradient;
+        roundRect(ctx, this.x - offsetX, this.y, this.width, this.height, 12, true, false);
+        if(this.label){
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 18px Roboto';
+            ctx.fillText(this.label, this.x + 15 - offsetX, this.y + this.height/2 + 6);
+        }
+    }
+    isHovered(mouseX, mouseY, offsetX){
+        return mouseX >= this.x - offsetX && mouseX <= this.x - offsetX + this.width && mouseY >= this.y && mouseY <= this.y + this.height;
+    }
+}
+
+class Goal {
+    constructor(x, y, size=100){
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.color = '#f3a683';
+    }
+    draw(offsetX){
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.moveTo(this.x + this.size/2 - offsetX, this.y);
+        ctx.lineTo(this.x - offsetX, this.y + this.size);
+        ctx.lineTo(this.x + this.size - offsetX, this.y + this.size);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowColor = '#f3a683';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+}
+
+function roundRect(ctx, x, y, width, height, radius, fill, stroke){
+    if(typeof stroke === 'undefined'){ stroke = true; }
+    if(typeof radius === 'undefined'){ radius = 5; }
+    if(typeof radius === 'number'){ radius = {tl: radius, tr: radius, br: radius, bl: radius}; }
+    else { 
+        var defaultRadius = {tl:0,tr:0,br:0,bl:0};
+        for(var side in defaultRadius){ radius[side] = radius[side] || 0; }
+    }
+    ctx.beginPath();
+    ctx.moveTo(x + radius.tl, y);
+    ctx.lineTo(x + width - radius.tr, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+    ctx.lineTo(x + width, y + height - radius.br);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+    ctx.lineTo(x + radius.bl, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+    ctx.lineTo(x, y + radius.tl);
+    ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+    ctx.closePath();
+    if(fill){ ctx.fill(); }
+    if(stroke){ ctx.stroke(); }
+}
+
+const player = new Player();
+const platforms = [
+    new Platform(0, canvas.height-50, 500, 50, '#9b59b6', 'Intro', 'Willkommen zu Fantasy.co!'),
+    new Platform(600, canvas.height-150, 250, 25, '#9b59b6', 'Features', 'Interaktive Story, Multiplayer, AI-Integration'),
+    new Platform(950, canvas.height-250, 300, 25, '#9b59b6', 'Experience', 'Unsere bisherigen Abenteuer und Projekte'),
+    new Platform(1350, canvas.height-180, 250, 25, '#9b59b6', 'Hobbies', 'Entwicklung, Gaming, Kreative Tools'),
+    new Platform(1700, canvas.height-220, 300, 25, '#9b59b6', 'Projects', 'Interaktive Erlebnisse, Story-Tools')
+];
+const goal = new Goal(2100, canvas.height-280-50);
+const tooltip = document.getElementById('tooltip');
+
+function gameLoop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    player.x = window.scrollY + canvas.width/4;
+    let pathY = canvas.height - 50 - player.height;
+    for(let p of platforms){
+        if(player.x + player.width/2 >= p.x && player.x + player.width/2 <= p.x + p.width){
+            pathY = p.y - player.height;
+            break;
+        }
+    }
+    player.y = pathY;
+    const offsetX = window.scrollY;
+    platforms.forEach(p => p.draw(offsetX));
+    goal.draw(offsetX);
+    player.draw(offsetX);
+    requestAnimationFrame(gameLoop);
+}
+gameLoop();
+
+window.addEventListener('resize', ()=>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+canvas.addEventListener('mousemove', (e)=>{
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    let found = false;
+    for(let p of platforms){
+        if(p.isHovered(mouseX, mouseY, window.scrollY)){
+            tooltip.style.display = 'block';
+            tooltip.style.left = mouseX + 15 + 'px';
+            tooltip.style.top = mouseY + 15 + 'px';
+            tooltip.textContent = p.info;
+            found = true;
+            break;
+        }
+    }
+    if(!found) tooltip.style.display = 'none';
+});
+
+canvas.addEventListener('click', (e)=>{
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    if(mouseX >= goal.x - window.scrollY && mouseX <= goal.x - window.scrollY + goal.size && mouseY >= goal.y && mouseY <= goal.y + goal.size){
+        window.open('https://fantasy.co/start', '_blank'); // Fantasy.co Call-to-Action
+    }
+});
+</script>
+</body>
+</html>

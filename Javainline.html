@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confidence.digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <link rel="stylesheet" href="assets/css/custom.css">
+
+  <style>
+    body { overflow-x: hidden; }
+
+    /* Loader Styles */
+    #loader {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      z-index: 50;
+    }
+
+    .hexagon {
+      aspect-ratio: 1;
+      width: 80px;
+      background: linear-gradient(135deg, #7e22ce, #3b82f6);
+      clip-path: polygon(
+        25% 5.77%, 75% 5.77%, 100% 50%,
+        75% 94.23%, 25% 94.23%, 0% 50%
+      );
+      box-shadow: 0 0 20px rgba(126,34,206,0.6), 0 0 40px rgba(59,130,246,0.4);
+    }
+
+    @keyframes pulseFlash {
+      0%   { transform: scale(1); opacity: 0.9; box-shadow: 0 0 15px rgba(126,34,206,0.6), 0 0 30px rgba(59,130,246,0.4); }
+      30%  { transform: scale(1.15); opacity: 1; box-shadow: 0 0 35px rgba(126,34,206,0.9), 0 0 60px rgba(59,130,246,0.7); }
+      60%  { transform: scale(1); opacity: 0.95; box-shadow: 0 0 20px rgba(126,34,206,0.6), 0 0 40px rgba(59,130,246,0.4); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fall2D {
+      0%   { transform: rotate(0deg) scale(1); opacity: 1; }
+      25%  { transform: rotate(180deg) scale(1.2); opacity: 0.95; }
+      50%  { transform: rotate(360deg) scale(1.2); opacity: 0.9; }
+      70%  { transform: rotate(360deg) scale(1.6); opacity: 0.7; }
+      90%  { transform: rotate(360deg) scale(10); opacity: 0.4; }
+      100% { transform: rotate(360deg) scale(25); opacity: 0; }
+    }
+
+    .animate-fall2d {
+      animation: pulseFlash 1s ease-out, fall2D 4s cubic-bezier(0.4, 0, 0.2, 1) 1s forwards;
+    }
+
+    .fade-in { animation: fadeIn 1s ease-in forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</head>
+<body class="bg-black text-white font-sans">
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="hexagon animate-fall2d"></div>
+  </div>
+
+  <!-- Hauptcontent -->
+  <div id="mainContent" class="opacity-0">
+
+    <!-- Header -->
+    <header class="relative bg-gray-900 text-gray-200 py-12 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-purple-900/40 to-purple-900/50 opacity-85"></div>
+      <div class="absolute top-6 right-6 sm:top-10 sm:right-10 z-20">
+        <div class="relative inline-block text-left">
+          <button id="menu-button" aria-expanded="false" aria-haspopup="true" aria-controls="dropdown-menu" class="inline-flex items-center justify-center rounded-md border border-gray-400 shadow-sm px-4 py-2 bg-gray-800 text-sm font-medium text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition">
+            EN
+            <svg class="ml-2 h-5 w-5 text-gray-200 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.354a.75.75 0 111.14.976l-4.25 5a.75.75 0 01-1.14 0l-4.25-5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <ul id="dropdown-menu" class="absolute right-0 mt-2 w-28 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none transform scale-95 opacity-0 transition-all duration-150 hidden" role="menu" aria-labelledby="menu-button">
+            <li><a href="lang/en.html" class="flex items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-700" role="menuitem">EN</a></li>
+            <li><a href="lang/es.html" class="flex items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-700" role="menuitem">ES</a></li>
+            <li><a href="index.html" class="flex items-center px-4 py-2 text-sm text-gray-200 hover:bg-gray-700" role="menuitem">DE</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="relative z-10 text-center px-4 max-w-3xl mx-auto py-8">
+        <h1 class="text-2xl font-medium tracking-wide text-red-500 drop-shadow-md mb-2">Confidence.digital</h1>
+        <p class="text-lg text-gray-700 font-medium">For a fulfilled life in your 20s, creating your reality</p>
+      </div>
+    </header>
+
+    <!-- Mittelbereich -->
+    <div class="max-w-7xl mx-auto">
+
+      
+          <!-- Einleitung -->
+ <section class="px-4 py-16">
+  <p class="text-center leading-relaxed max-w-3xl mx-auto">
+    <span class="text-cyan-700 text-lg font-semibold">Selbstbewusstsein ist kein Geschenk – es ist deine Entscheidung.</span><br><br>
+    Spür die Kraft in dir. Wage den ersten Schritt und spüre, wie du wächst. Echte innere Stärke entsteht oft durch kleine tägliche Entscheidungen – nicht nur durch große Erfolge. Jeder bewusste Schritt, den du für dich machst, stärkt dein Vertrauen und macht dich resilienter.
+  </p>
+</section>
+
+
+    <!-- Container 1: Bild rechts -->
+    <section class="px-4 py-16 flex flex-col md:flex-row items-center gap-8">
+      <div class="flex-1">
+        <h2 class="text-2xl font-semibold mb-4">Bleibe in deiner Mitte</h2>
+        <p class="leading-relaxed">
+          Egal wie stark der Wind weht – wer in seiner Mitte ruht, den wirft nichts um.  
+          Selbstvertrauen beginnt, wenn du aufhörst, dich klein zu machen,  
+          und anfängst, deinen Platz in der Welt einzunehmen.
+        </p>
+      </div>
+      <div class="flex-1">
+        <img src="55.jpg" alt="Symbol für Stärke" class="w-full h-auto rounded-lg" loading="lazy">
+      </div>
+    </section>
+
+    <!-- Container 2: Video links -->
+<section class="px-4 py-16 flex flex-col md:flex-row items-center gap-8">
+  <div class="flex-1 order-2 md:order-1">
+    <video 
+      data-src="assets/videos/03.mp4"
+      preload="none"
+      autoplay 
+      muted 
+      loop 
+      playsinline 
+      class="lazy w-full h-auto rounded-lg"
+    >
+      Dein Browser unterstützt das Video-Tag nicht.
+    </video>
+  </div>
+  <div class="flex-1 order-1 md:order-2">
+    <h2 
+  class="text-2xl font-semibold mb-4"
+>
+  Deine Stimme zählt
+</h2>
+    <p class="leading-relaxed">
+      Sprich klar. Sprich mutig. Sprich, auch wenn andere schweigen.  
+      Selbstbewusstsein bedeutet nicht, der Lauteste zu sein –  
+      sondern der, der den Mut hat, sich selbst treu zu bleiben.
+    </p>
+  </div>
+</section>
+
+
+
+
+    <!-- Großer Farb-Container -->
+    <section class="bg-blue-600 text-white px-4 py-16 rounded-lg">
+      <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-3xl font-bold mb-4">Du bist genug.</h2>
+        <p class="text-lg leading-relaxed">
+          Du brauchst keine Erlaubnis, um groß zu träumen.  
+          Du musst dich nicht anpassen, um akzeptiert zu werden.  
+          Dein Wert hängt nicht davon ab, was andere denken –  
+          sondern davon, dass du an dich selbst glaubst.
+        </p>
+      </div>
+    </section>
+
+
+<section class="py-16 px-4 sm:px-0">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- Linkes Bild -->
+
+
+    <div class="relative">
+      <div class="sticky top-20">
+        <img 
+  id="stickyImage" 
+  src="77.jpg" 
+  alt="Großes Motiv" 
+  class="w-full object-cover rounded-lg" 
+  style="height: calc(100vh + 10px);"
+/>
+      </div>
+    </div>
+
+    <!-- Rechte Spalte -->
+    <div class="relative">
+      <div id="featuresWrapper">
+        <div class="sticky top-20 feature flex items-center justify-center bg-black text-white p-6 rounded-lg shadow relative z-[1]">
+          <div>
+            <h3 class="text-xl font-bold mb-0">Klarheit</h3>
+            <p>Wissen, was du willst, ist der erste Schritt zu unerschütterlichem Selbstbewusstsein.
+              Du brauchst keine Erlaubnis, um groß zu träumen.  
+              Du musst dich nicht anpassen, um akzeptiert zu werden.  
+              Dein Wert hängt nicht davon ab, was andere denken –  
+              sondern davon, dass du an dich selbst glaubst.
+            </p>
+          </div>
+        </div>
+
+        <div class="sticky top-20 feature flex items-center justify-center bg-black text-white p-6 rounded-lg shadow relative z-[2]">
+          <div>
+            <h3 class="text-xl font-bold mb-0">Mut</h3>
+            <p>Mut bedeutet nicht, keine Angst zu haben – sondern zu handeln, obwohl sie da ist. 
+              Wer handelt obwohl er Angst hat lässt sich nicht von der Angst leiten, er ist der Herr seines eigenen Schicksals.
+              Den Angst hält dich im Zaun Mut lässt dich träumen.
+              
+            </p>
+          </div>
+        </div>
+
+        <div class="feature flex items-center justify-center bg-black text-white p-6 rounded-lg shadow relative z-[3]">
+          <div>
+            <h3 class="text-xl font-bold mb-0">Fokus</h3>
+            <p>Je klarer dein Fokus, desto weniger kann dich das Außen aus der Ruhe bringen.
+              Mut bedeutet nicht, keine Angst zu haben – sondern zu handeln, obwohl sie da ist.
+              
+            </p>
+          </div>
+        </div>
+
+        <div class="sticky top-20 feature flex items-center justify-center bg-red-700 p-6 rounded-lg shadow relative z-[4]">
+          <div>
+            <h3 class="text-xl font-bold mb-0">Authentizität</h3>
+            <p>Echtheit zieht genau die Menschen und Chancen an, die wirklich zu dir passen.
+              Mut bedeutet nicht, keine Angst zu haben – sondern zu handeln, obwohl sie da ist.
+              
+            </p>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- GSAP + ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  function adjustFeatureHeights() {
+    const img = document.getElementById("stickyImage");
+    const features = document.querySelectorAll(".feature");
+
+    if (!img.complete) {
+      img.onload = adjustFeatureHeights;
+      return;
+    }
+
+    const imgHeight = img.offsetHeight;
+    const halfHeight = imgHeight / 2;
+
+    features.forEach((feature, index) => {
+      feature.style.height = halfHeight + "px";
+      if (index === 0) {
+        feature.style.marginTop = "0px";
+      }
+    });
+  }
+
+  window.addEventListener("load", adjustFeatureHeights);
+  window.addEventListener("resize", adjustFeatureHeights);
+
+  const stickyImg = document.querySelector("#stickyImage");
+  const stickyOffset = 80; // Tailwind top-20 (~80px)
+
+  gsap.utils.toArray(".feature").forEach((block) => {
+    gsap.to(block, {
+      scrollTrigger: {
+        trigger: block,
+        start: () => `top+=${stickyOffset} bottom-=${stickyImg.offsetHeight}px`,
+        end: () => `bottom top`,
+        toggleActions: "play none none none"
+      },
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      ease: "power2.out"
+    });
+  });
+</script>
+
+
+
+  <!-- Container 1: Video rechts -->
+<section class="px-6 py-12 flex flex-col md:flex-row items-center gap-8">
+  <div class="flex-1">
+    <h2 class="reveal delay-100 text-2xl font-semibold mb-4">Dein Ziel. Dein Weg. Deine Regeln.</h2>
+    <p class="leading-relaxed">
+    <p class="leading-relaxed">
+    Kenne dein Ziel und folge deiner Bestimmung – ohne dich zu rechtfertigen und ohne um Erlaubnis zu fragen.  
+    Die Welt gehört denen, die mutig genug sind, ihren eigenen Weg zu gehen, auch wenn andere zweifeln.  
+    Mach den ersten Schritt – Du weißt, dass du mehr kannst, als du dir selbst zutraust.
+    </p>
+
+    </p>
+  </div>
+  <div class="flex-1">
+    <video 
+  data-src="assets/videos/02.mp4"
+  preload="none"
+  autoplay 
+  muted 
+  loop 
+  playsinline 
+  class="lazy w-full h-auto rounded-lg"
+>
+  Dein Browser unterstützt das Video-Tag nicht.
+</video>
+  </div>
+</section>
+
+      <!-- Sections hier wie in deinem bestehenden Code -->
+      <!-- Einleitung, Bilder, Videos, Farbcontainer usw. -->
+      <!-- … (hier kannst du alles aus deinem bisherigen HTML einfügen) … -->
+
+
+
+
+
+
+    </div>
+
+  </div>
+
+          <!-- Footer -->
+  <footer class="bg-black text-white py-12 mt-16 border-t border-gray-700">
+    <div class="max-w-5xl mx-auto px-6 flex flex-col items-center space-y-6">
+      <h2 class="text-sm sm:text-base tracking-wide">© Confidence.digital. Alle Rechte vorbehalten</h2>
+      <nav class="flex space-x-8 text-base font-light">
+        <a href="#" class="text-gray-400 hover:text-white">Impressum</a>
+        <a href="#" class="text-gray-400 hover:text-white">Datenschutz</a>
+        <a href="#" class="text-gray-400 hover:text-white">Verbinden</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Dropdown Script -->
+  <script>
+    const button = document.getElementById('menu-button');
+    const menu = document.getElementById('dropdown-menu');
+    const icon = button.querySelector('svg');
+
+    button.addEventListener('click', () => {
+      const isHidden = menu.classList.contains('hidden');
+      menu.classList.toggle('hidden', !isHidden);
+      menu.classList.toggle('opacity-100', isHidden);
+      menu.classList.toggle('scale-100', isHidden);
+      menu.classList.toggle('opacity-0', !isHidden);
+      menu.classList.toggle('scale-95', !isHidden);
+      button.setAttribute('aria-expanded', isHidden);
+      icon.classList.toggle('rotate-180', isHidden);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!button.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden', 'opacity-0', 'scale-95');
+        menu.classList.remove('opacity-100', 'scale-100');
+        button.setAttribute('aria-expanded', false);
+        icon.classList.remove('rotate-180');
+      }
+    });
+  </script>
+
+  <!-- Loader Script -->
+  <script>
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader');
+      const mainContent = document.getElementById('mainContent');
+
+      setTimeout(() => {
+        loader.style.display = 'none';
+        mainContent.classList.add('fade-in');
+      }, 5000); // Dauer der Animation + Puffer
+    });
+  </script>
+
+
+<script>
+  // Intersection Observer für Videos
+  const lazyVideos = document.querySelectorAll('video.lazy');
+
+  const videoObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const video = entry.target;
+        video.src = video.dataset.src;
+        video.load();
+        observer.unobserve(video);
+      }
+    });
+  });
+
+  lazyVideos.forEach(video => videoObserver.observe(video));
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const videos = document.querySelectorAll("video");
+
+  function startVideos() {
+    videos.forEach(video => {
+      if (video.paused) {
+        video.play().catch(err => {
+          console.log("Autoplay blockiert:", err);
+        });
+      }
+    });
+
+    // Event Listener nur einmal ausführen, dann wieder entfernen
+    document.removeEventListener("click", startVideos);
+    document.removeEventListener("touchstart", startVideos);
+  }
+
+  document.addEventListener("click", startVideos);
+  document.addEventListener("touchstart", startVideos);
+});
+</script>
+
+
+</body>
+</html>

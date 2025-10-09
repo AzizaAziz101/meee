@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confidence Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { overflow: hidden; }
+
+    .hexagon {
+      width: 140px;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #7e22ce, #3b82f6);
+      clip-path: polygon(
+        25% 5.77%,   /* Oben links */
+        75% 5.77%,   /* Oben rechts */
+        100% 50%,    /* Rechts */
+        75% 94.23%,  /* Unten rechts */
+        25% 94.23%,  /* Unten links */
+        0% 50%       /* Links */
+      );
+    }
+
+    @keyframes fall2D {
+      0%   { transform: rotate(0deg) scale(1); opacity: 1; }
+      40%  { transform: rotate(120deg) scale(1.2); } /* bis hier dreht es */
+      60%  { transform: rotate(120deg) scale(1.6); } /* ab hier keine Drehung mehr */
+      100% { transform: rotate(120deg) scale(25); opacity: 0; }
+    }
+
+    .animate-fall2d {
+      animation: fall2D 4s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 1.2s ease forwards;
+    }
+  </style>
+</head>
+<body class="bg-black flex items-center justify-center h-screen">
+  <!-- Loader -->
+  <div id="loader" class="hexagon animate-fall2d" aria-hidden="true"></div>
+
+  <!-- Website Content -->
+  <main id="content" class="hidden text-center">
+    <h1 class="text-white text-4xl md:text-6xl font-bold">confidence.digital</h1>
+    <p class="text-gray-400 mt-4 text-lg md:text-xl">Digitale Lösungen mit Präzision & Stil</p>
+  </main>
+
+  <script>
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+      const content = document.getElementById("content");
+      content.classList.remove("hidden");
+      content.classList.add("fade-in");
+      document.body.style.overflow = "auto";
+    }, 4000);
+  </script>
+</body>
+</html>

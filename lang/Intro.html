@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confidence Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { 
+      overflow: hidden; 
+      perspective: 1000px; /* Wichtig für 3D-Effekt */ 
+    }
+
+    .heptagon {
+      width: 140px;
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #7e22ce, #3b82f6);
+      clip-path: polygon(
+        50% 0%,
+        90% 20%,
+        100% 60%,
+        75% 100%,
+        25% 100%,
+        0% 60%,
+        10% 20%
+      );
+      transform-style: preserve-3d;
+    }
+
+    @keyframes fallOver {
+      0%   { transform: rotateX(0deg) rotateY(0deg) scale(1); }
+      20%  { transform: rotateX(40deg) rotateY(10deg) scale(1); }
+      40%  { transform: rotateX(70deg) rotateY(-5deg) scale(1); }
+      60%  { transform: rotateX(90deg) rotateY(0deg) scale(1.1); }
+      100% { transform: rotateX(90deg) rotateY(0deg) scale(30); opacity: 0; }
+    }
+
+    .animate-fall {
+      animation: fallOver 4s ease-in-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-black flex items-center justify-center h-screen">
+  <!-- Loader -->
+  <div id="loader" class="heptagon animate-fall"></div>
+
+  <!-- Website Content -->
+  <div id="content" class="hidden">
+    <h1 class="text-white text-4xl md:text-6xl font-bold text-center">confidence.digital</h1>
+  </div>
+
+  <script>
+    // Nach Animation Content zeigen
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("content").classList.remove("hidden");
+      document.body.style.overflow = "auto";
+    }, 4000); // nach 4s
+  </script>
+</body>
+</html>

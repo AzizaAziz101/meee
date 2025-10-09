@@ -20,3 +20,12 @@ window.addEventListener('load', () => {
     mainContent.classList.add('fade-in');
   }
 });
+
+const inIframe = window.self !== window.top;
+
+if (inIframe) {
+  // Zeige das Intro auch dann, wenn es sonst übersprungen würde
+  localStorage.removeItem('introPlayed');
+  startIntro();
+}
+
